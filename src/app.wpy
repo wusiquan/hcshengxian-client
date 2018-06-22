@@ -1,0 +1,88 @@
+<style lang="scss">
+@import './styles/weui';
+@import './styles/icons';
+
+page {
+  height: 100vh;
+}
+
+.page__bd {
+  height: 100%;
+  background-color: #f5f5f5;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  constructor () {
+    super()
+    this.use('requestfix')
+    this.use('promisify')
+  }
+
+  onLoad() {
+  }
+
+  globalData = {
+    auth: {}
+  }
+
+  config = {
+    pages: [
+      'pages/shop',
+      'pages/customer/address_edit', 
+      'pages/index',
+      'pages/customer/index',
+      'pages/customer/address_list',
+      'pages/customer/address_locate'
+    ],
+    // window: {
+    //   backgroundTextStyle: 'light',
+    //   navigationBarBackgroundColor: '#fff',
+    //   navigationBarTitleText: 'hcsx',
+    //   navigationBarTextStyle: 'black'
+    // }
+    window: {
+      backgroundTextStyle: 'dark',
+      backgroundColor: '#F5F5F5',
+      navigationBarBackgroundColor: '#0085ff'
+    },
+    tabBar: {
+      color: '#8e8e93',
+      selectedColor: '#0089dc',
+      borderStyle: 'white',
+      backgroundColor: '#ffffff',
+      list: [
+        {
+          iconPath: 'images/tab/home.png',
+          selectedIconPath: 'images/tab/home-active.png',
+          pagePath: 'pages/index',
+          text: '首页'
+        },
+        {
+          iconPath: 'images/tab/order.png',
+          selectedIconPath: 'images/tab/order-active.png',
+          pagePath: 'pages/shop',
+          text: '分类'
+        },
+        // {
+        //   'iconPath': 'images/tab/cart.png',
+        //   'selectedIconPath': 'images/tab/red/cart-active.png',
+        //   'pagePath': 'pages/goods/cart',
+        //   'text': '购物车'
+        // },
+        {
+          'iconPath': 'images/tab/user.png',
+          'selectedIconPath': 'images/tab/user-active.png',
+          'pagePath': 'pages/customer/index',
+          'text': '我的'
+        }
+      ]
+    },
+    debug: true
+  }
+}
+</script>

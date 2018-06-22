@@ -1,0 +1,20 @@
+<script>
+import wepy from 'wepy'
+
+export default class Loadrefresh extends wepy.mixin {
+
+  data = {
+    // 是否正在加载
+    isLoading: false
+  }
+  
+
+  /**
+   * 到达底部
+   */
+  arrivedBottom() {
+    console.log(1, this)
+    // await this.next()
+  }
+}
+</script>

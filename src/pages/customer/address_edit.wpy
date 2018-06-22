@@ -1,0 +1,148 @@
+<template>
+  <view class="address-edit-container page__bd">
+    <form>
+      <view class="edit-contacts edit-formbloack">
+        <view class="edit-title">联系人</view>
+        <view class="contacts-form">
+          <view class="contacts-name edit-input-wrapper">
+            <input class="address-input" value="" type="text" placeholder="请输入文本" maxlength="20" />
+          </view>
+          <view class="contacts-gender">
+            <view class="gender-m gender gender-checked">先生</view>
+            <view class="gender-w gender">女士</view>
+          </view>
+        </view>
+      </view>
+      <view class="edit-phone edit-formbloack">
+        <view class="edit-title">电话</view>
+        <view class="phone-number edit-input-wrapper">
+          <input class="phone-input" value="" type="text" placeholder="您的手机号" maxlength="15" />
+        </view>
+      </view>
+      <view class="edit-location edit-formbloack">
+        <view class="edit-title">位置</view>
+        <navigator class="edit-input-wrapper" url="/pages/customer/address_locate">
+          <input class="location-input" value="{{location}}" type="text" placeholder="小区/写字楼/学校等" maxlength="15" />
+          <icon class="iconfont icon-forward"></icon>
+        </navigator>
+      </view>
+    </form>
+  </view>
+
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class AddressEdit extends wepy.page {
+  data = {
+    location: ''
+  }
+  
+  onShow() {
+
+  }
+
+  setLocation(location) {
+    this.location = location 
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../styles/fns';
+
+@mixin address-input($txtcolor:#666) {
+  font-size: px2rem(30);
+  line-height: 36rpx;
+  min-height: 36rpx;
+  color: $txtcolor;
+}
+
+.address-edit-container {
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  
+  // 修改input的placeholder的样式
+  .input-placeholder {
+    @include address-input(#999);
+  }
+
+  .edit-input-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 20rpx 0;
+    flex-grow: 1;
+    border-bottom: 1rpx solid #eee;
+  }
+
+  .edit-title {
+    flex-basis: 130rpx;
+    padding: 28rpx 0;
+    font-size: px2rem(30);
+  }
+
+  .edit-formbloack {
+    display: flex;
+    padding-left: 30rpx;
+    line-height: 36rpx;
+    background-color: #fff;
+    border-bottom: 1rpx solid #eee;
+  }
+
+  .address-input,
+  .phone-input,
+  .location-input {
+    @include address-input;
+  }
+
+  // --- 联系人 ---
+  .edit-contacts {
+    .contacts-form {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+    }
+
+    .contacts-gender {
+      display: flex;
+      padding: 20rpx 0;
+    }
+
+    .gender {
+      width: 136rpx;
+      line-height: 56rpx;
+      text-align: center;
+      font-size: px2rem(28);
+      border: 1rpx solid #ddd;
+      border-radius: 8rpx;
+      background: #fff;
+      color: #666;
+    }
+
+    .gender-m {
+      margin-right: 20rpx;
+    }
+
+    .gender-checked {
+      color: #2395ff;
+      background: #eef7ff;
+      border-color: rgba(35, 149, 255, .18);
+    }
+  }
+
+  // --- 位置 ---
+  .edit-location {
+    .location-input {
+      flex-grow: 1;
+    }
+
+    .icon-forward {
+      width: 36rpx;
+      height: 38rpx;
+      font-size: px2rem(36);
+      margin-right: 24rpx;
+      color: #D1D1D6;
+    }
+  }
+}
+</style>

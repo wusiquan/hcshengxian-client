@@ -1,0 +1,80 @@
+<style lang="scss">
+@import '../../styles/fns';
+
+.tip-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 96rpx;
+  // justify-content: space-between;
+  color: #666;
+  z-index: 100;
+  
+  .tip-txt-default {
+    display: flex;
+    align-items: center;
+    height: 72rpx;
+    padding: 12rpx 20rpx;
+    box-sizing: border-box;
+    line-height: 1.0;
+    font-size: px2rem(24);
+    background-color: rgba(255, 250, 218,.98);
+  }
+
+  .icon-jingshi {
+    color: #ff5339;
+    font-size: px2rem(28);
+    margin-right: 12rpx;
+  }
+
+  .txt {
+    color: #666;
+  }
+
+  .tip-txt-promotion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    height: 40rpx;
+    line-height: 1.0;
+    font-size: px2rem(20);
+    background-color: #fffad6;
+    opacity: 0.96;
+    border-top: 1rpx solid #f9e8a3;
+  }
+}
+</style>
+<template>
+<view class="tip-banner">
+  <block wx:if="{{componetIs === 'default'}}">
+    <view class="tip-txt-default">
+      <icon class="iconfont icon-jingshi"></icon>
+      <text class="txt">商家休息中，暂不接单</text>
+    </view>
+  </block>
+  <block wx:elseif="{{componetIs === 'promotion'}}">
+    <view class="tip-txt-promotion">
+      <text class="txt">满39减13，满59减15</text>
+    </view>
+  </block>
+</view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class TipBanner extends wepy.component {
+  // 没有vue的动态组件
+  props = {
+    componetIs: {
+      type: String,
+      default: 'default'
+    }
+  }
+
+  onLoad() {
+    console.log(this.componetIs)
+  }
+}
+</script>

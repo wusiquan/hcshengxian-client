@@ -1,0 +1,352 @@
+<style lang="scss">
+@import '../../styles/fns';
+
+.address-locate-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+
+  .locate-map {
+    position: relative;
+    width: 100%;
+    height: 600rpx;
+
+    .controls-central {
+      position: relative;
+      left: 50%;
+      top: 50%;
+      width: 52rpx;
+      height: 80rpx;
+      margin-left: -26rpx;
+      margin-top: -72rpx;
+      
+      .plus {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 16rpx;
+        height: 16rpx;
+        margin-left: -8rpx;
+      }
+
+      .marker {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 52rpx;
+        height: 72rpx;
+      }
+    }
+
+    .controls-navtolocation {
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      left: 16rpx;
+      bottom: 16rpx;
+      width: 88rpx;
+      height: 88rpx;
+      
+      .navbg {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .nav {
+        width: 48rpx;
+        height: 48rpx;
+        z-index: 1;
+      }
+    }
+  }
+
+  .poi-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 132rpx;
+    box-sizing: border-box;
+    padding-top: 12rpx;
+    padding-left: 30rpx;
+    border-bottom: 1rpx solid #d3d3d3;
+
+    .title {
+      width: 92%;
+      line-height: px2rem(54);
+      font-size: px2rem(28);
+      font-weight: 400;
+      color: #333;
+      @include text-ellipsis;
+    }
+
+    .address {
+      width: 92%;
+      height: 40rpx;
+      line-height: 40rpx;
+      font-size: px2rem(24);
+      color: gray;
+      @include text-ellipsis;
+    }
+  }
+  
+  // 发现直接poi-list-wrapper flex-grow:1 overflow-y: scroll就搞定了, 可以滚动了
+  // 最后还是按标准格式，套一层scroller吧
+  .poi-list-wrapper {
+    // 这两行很重要
+    flex-grow: 1;
+    flex-basis: 0;
+    overflow: hidden;
+
+    .poi-list-scroller {
+      height: 100%;
+      // 之前没用scroll-view
+      // overflow-y: scroll;
+    }
+    
+    .icon-yigouxuan {
+      position: absolute;
+      top: 50%;
+      right: 15rpx;
+      margin-top: -16rpx;
+      font-size: px2rem(32);
+      color: #2395ff;
+    }
+  }
+
+  .suggestion-wrapper {
+    position: absolute;
+    top: 96rpx;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
+    background: #f6f6f6;
+    overflow: hidden;
+  
+    .suggestion-scroller {
+      height: 100%;
+    }
+
+    .suggestion-item {
+      padding-top: 16rpx;
+      padding-left: 30rpx;
+
+      // .suggestion-search {
+      //   position: absolute;
+      //   top: 26rpx;
+      //   left: 22rpx;
+      //   line-height: 1.0;
+      // }
+
+      // .item-txt {
+      //   height: 100%;
+      //   border-bottom: 1rpx solid #d3d3d3;
+      // }
+    }
+  }
+}
+</style>
+
+<template>
+  <view class="address-locate-container page__bd">
+    <!-- <button @tap="hellomap">正在定位</button> -->
+    <SearchBar @labelTap.user="labelTap" @inputThrottle.user="inputThrottle" @cancelInput.user="cancelInput" />
+
+    <map id="locatemap" class="locate-map" wx:if="{{located}}" 
+        longitude="{{longitude}}" 
+        latitude="{{latitude}}" 
+        scale="16"
+        show-location="true">
+
+        <!-- 地图中心控件 -->
+        <cover-view class="controls-central">
+          <cover-image src="/images/plus.png" class="plus"></cover-image>
+          <cover-image src="/images/marker.png" class="marker"></cover-image>
+        </cover-view>
+
+        <!-- nav控件 -->
+        <cover-view class="controls-navtolocation" @tap="navToLocation">
+          <cover-image src="/images/navbg.png" class="navbg"></cover-image>
+          <cover-image src="/images/nav.png" class="nav"></cover-image>
+        </cover-view>
+    </map>
+
+    <view class="poi-list-wrapper">
+      <scroll-view scroll-y class="poi-list-scroller">
+        <view class="poi-item poi-curpos" @tap="tapAddress('curpos', 0)">
+          <view class="title">{{currentLocation.display}}</view>
+          <view class="address">{{currentLocation.detail}}</view>
+          <icon class="iconfont icon-yigouxuan" hidden="{{tapedIndex !== -1}}"></icon>
+        </view>
+        
+        <block wx:if="{{nearbyLocations}}">
+          <repeat for="{{nearbyLocations}}">
+            <view class="poi-item poi-nearby-item" @tap="tapAddress('nearby', {{index}})">
+              <view class="title">{{item.display}}</view>
+              <view class="address">{{item.address}}</view>
+              <icon class="iconfont icon-yigouxuan" hidden="{{index !== tapedIndex}}"></icon>
+            </view>
+          </repeat>
+        </block>
+      </scroll-view>
+    </view>
+
+    <view class="suggestion-wrapper" hidden="{{sugHidden}}">
+      <scroll-view scroll-y class="suggestion-scroller" bindscrolltolower="reachSugBottom" lower-threshold="70">
+        <block wx:for="{{searchLocations}}" wx:key="id" wx:index="index">
+          <view class="suggestion-item poi-item">
+            <!-- <icon class="weui-icon-search suggestion-search" type="search" size="14"></icon> -->
+            <!-- <view class="item-txt"> -->
+              <view class="title">{{item.display}}</view>
+              <view class="address">{{item.address}}</view>
+            <!-- </view> -->
+          </view>
+        </block>
+        <!-- 加载更多 啥时候显示加载，啥时候显示没数据？-->
+        <Loadmore />
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Map from 'api/map'
+import Loadmore from 'components/loadmore'
+import SearchBar from 'components/customer/search_bar'
+import throttle from 'utils/throttle'
+// import Loadrefresh from '../../mixins/loadrefresh'
+
+export default class AddressLocate extends wepy.page {
+  // TODO: 需要考虑什么时候重置这些值
+  _loadSearch = null
+  _searchIndex = 0
+  inputValue = ''
+
+  data = {
+    located: false,
+
+    // 经度
+    longitude: 0,
+    // 纬度
+    latitude: 0,
+    
+    // 当前地点 一条
+    currentLocation: null,
+    // 附近地点 十条
+    nearbyLocations: null,
+    
+    // 是否显示suggestion
+    sugHidden: true,
+    searchLocations: {},
+
+    // 用户点击的地址id
+    tapedIndex: undefined
+  }
+  
+  components = {
+    Loadmore: Loadmore,
+    SearchBar: SearchBar
+  }
+
+  // mixins = [ Loadrefresh ]
+
+  // TODO: 需要先loading
+  async onLoad() {
+    this._loadSearch = throttle(this.loadSearch, 200, { trailing: true })
+
+    // 位置纬度，经度
+    const { latitude, longitude } = await wepy.getLocation({ type: 'gcj02' })
+    this.located = true
+    this.latitude  = latitude
+    this.longitude = longitude
+    let locations = await Map.reverse(latitude, longitude)
+    this.currentLocation = locations.current
+    this.nearbyLocations = locations.nearby
+    
+    // 地图环境
+    this._mapContext = wx.createMapContext("locatemap")
+    this.$apply()
+  }
+  
+  methods = {
+    reachSugBottom() {
+      this.loadSearch()
+    },
+
+    labelTap(e) {
+      this.sugHidden = false
+    },
+
+    // 取建议数据
+    async inputThrottle(inputVal) {
+      this._inputValue = inputVal
+      let locations = await Map.getSug(inputVal, this.latitude, this.longitude)
+      this.searchLocations = locations
+      this.$apply()
+    },
+
+    cancelInput() {
+      this.sugHidden = true
+    },
+
+    // 点击某个地址
+    tapAddress(k, index) {
+      let location = ''
+      if (k == 'curpos') {
+        location = this.currentLocation.display
+        this.tapedIndex = -1
+      } else if (k == 'nearby'){
+        location = this.nearbyLocations[index].display
+        this.tapedIndex = index
+      }
+
+      let pages = getCurrentPages()
+      let prevPage = pages[pages.length - 2]
+      prevPage.setLocation(location)
+      // 仅仅是为了让用户看到勾?
+      this._clearTimer()
+      this._navTimeout = setTimeout(() => {
+        wx.navigateBack()
+      }, 500)
+    }
+  }
+
+  /**
+   * 地图中心回到当前定位点
+   */
+  navToLocation() {
+    this._mapContext.moveToLocation()
+  }
+
+  // TODO: 
+  /**
+   * 加载更多取搜索建议
+   *
+   * 腾讯地图貌似并不会处理是否还有新数据
+   * 现在处理的策略是根据每条id合并
+   * 即再次请求合并入数据中发现条数没有变化，那么说明没有更多数据了，下次就不给用户请求了
+   */
+  async loadSearch() {
+    let locations = await Map.search(this._inputValue, this.latitude, this.longitude, this._searchIndex)
+    this.searchLocations = this.searchLocations.concat(locations)
+    this._searchIndex++
+    this.$apply()
+  }
+
+  _clearTimer() {
+    if (this._navTimeout) {
+      clearTimeout(this._navTimeout)
+      this._navTimeout = null
+    }
+  }
+
+  onUnload() {
+    this._clearTimer()
+  }
+}
+</script>
+

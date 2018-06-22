@@ -1,0 +1,150 @@
+<style lang="scss">
+.shop-container {
+  height: 100%;
+  overflow: hidden;
+
+  .tab-content {
+    height: calc(100% - 80rpx);
+    // height: 100%;
+    // padding-bottom: 81rpx;
+    // box-sizing: border-box;
+  }
+
+  .swiper-list {
+    display: flex;
+    height: 100%;
+  }
+
+  .menu {
+    position: relative;
+    display: flex;
+    height: 100%;
+  }
+
+  .menu-goods {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
+}
+</style>
+
+<template>
+
+<view class="shop-container">
+  <ShopTab class="tab-title" :cur.sync="currentIndex" @switchTab="switchTab"></ShopTab>
+  <view class="tab-content">
+    <swiper class="swiper-list" duration="300" @change="changeTab" current="{{currentIndex}}">
+      <swiper-item class="menu">
+        <!-- 商品类别列表 -->
+        <CategoryList width="154" :allCategories.sync="allCategories" />
+        <!-- 商品列表 -->
+        <GoodsList class="menu-goods" :allCategories.sync="allCategories" />
+
+        <TipBanner componetIs="promotion" />
+        <!-- 购物车Banner -->
+        <CartBanner />
+        <!-- 商品Modal -->
+        <GoodsModal />
+    </swiper-item>
+      <swiper-item>
+        <Comments />
+      </swiper-item>
+      <swiper-item>
+        <ShopInfo />
+      </swiper-item>
+    </swiper>
+  </view>
+</view>
+
+</template>
+
+<script>
+import wepy from 'wepy'
+import ShopTab from 'components/shop/shop_tab'
+import CategoryList from 'components/shop/category_list'
+import GoodsList from 'components/shop/goods_list'
+import Comments from 'components/shop/comments'
+import ShopInfo from 'components/shop/shop_info'
+import GoodsModal from 'components/shop/goods_modal'
+import TipBanner from 'components/shop/tip_banner'
+import CartBanner from 'components/shop/cart_banner'
+import Goods from 'api/goods'
+import Tips from 'utils/tips'
+
+export default class Category extends wepy.page {
+  data = {
+    currentIndex: 0,
+    allCategories: null
+  }
+
+  components = {
+    ShopTab: ShopTab,
+    CategoryList: CategoryList,
+    GoodsList: GoodsList,
+    Comments: Comments,
+    ShopInfo: ShopInfo,
+    TipBanner: TipBanner,
+    CartBanner: CartBanner,
+    GoodsModal: GoodsModal
+  }
+
+  methods = {
+    // 监听swiper的change事件
+    // 手滑是swiper组件提供的change事件
+    // 点击tab是修改了swiper组件的current属性触发它的change事件
+    changeTab(event) {
+      let detail = event.detail
+      let { current, source } = detail
+      if (source === 'touch' && this.currentIndex != current) {
+        this.currentIndex = detail.current
+      }
+    }
+  }
+  
+  events = {
+    // 监听shopTab的tap事件
+    switchTab(index) {
+      this.currentIndex = index
+    }
+  }
+
+  async onLoad() {
+    // setTimeout(() => {
+    //   this.cartEmptyClass = ''
+    //   this.$apply()
+    // }, 3000)
+
+    // 获取手机信息
+    // wepy.getSystemInfo().then((res) => {
+    //   store.dispatch({
+    //     type: actionTypes.getUA,
+    //     system: res.system
+    //   })
+    // })
+    
+    Tips.showLoading()
+    
+    let allCategories = await Goods.getCategories()
+    this.allCategories = allCategories
+
+    setTimeout(() => {
+      Tips.hideLoading()
+    })
+
+    this.$apply()
+  }
+
+  onShow() {
+    // setTimeout(() => {
+    //   var query = wx.createSelectorQuery()
+    //   query.select('#aaa').boundingClientRect()
+    //   query.exec(function (res) {
+    //     //res就是 所有标签为mjltest的元素的信息 的数组
+    //     console.log(res)
+    //     //取高度
+    //     console.log(res[0].height)
+    //   })
+    // }, 2000)
+  }
+}
+</script>

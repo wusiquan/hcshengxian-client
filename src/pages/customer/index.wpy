@@ -1,0 +1,98 @@
+<template>
+  <view class="page__bd customer-container">
+    <view class="customer-info">
+      <view class="avatar"></view>
+      <!-- <image src="https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png" class="avatar" /> -->
+      <view class="username">user***name</view>
+    </view>
+    <view class="customer-content">
+      <navigator url="/pages/customer/address_list" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__hd">
+          <icon class="iconfont icon-dingwei"></icon>
+          <!-- <image src="http://xs01.meituan.net/waimai_i/img/user-addr-icon.192fb37b.png" style="margin-right: 5px;vertical-align: middle;width:20px; height: 20px;"></image> -->
+        </view>
+        <view class="weui-cell__bd customer-txt">我的地址</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class Customer extends wepy.page {
+  onShow() {
+    // setTimeout(() => {
+    //   wepy.showModal({
+    //     title: '未登陆',
+    //     content: '亲，需要您登陆哦',
+    //     confirmText: '授权登陆',
+    //     cancelText: '随便逛逛'
+    //   }).then((res) => {
+    //     console.log(1, res)
+    //   })
+    // }, 1000);
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../styles/fns';
+
+.customer-container {  
+  .weui-cell {
+    background-color: #fff;
+  }
+
+  .weui-cell__hd {
+    display: flex;
+    height: 36rpx;
+    line-height: 36rpx;
+    margin-right: 20rpx;
+    padding-bottom: 2rpx;
+  }
+
+  .icon-dingwei {
+    font-size: px2rem(36);
+    color: #4aa5f0;
+  }
+
+  .customer-content {
+    margin-top: 20rpx;
+  }
+
+  .customer-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 220rpx;
+    background-image: linear-gradient(90deg,#0af,#0085ff);
+    // background: url('http://xs01.meituan.net/waimai_i/img/user-banner.8c03fc75.png') no-repeat center;
+  }
+
+  .avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border: 6rpx solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    background-image: url("https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png");
+    background-position: 0px 0px; 
+    background-size: 120rpx;
+  }
+
+  .username {
+    color: #fff;
+    text-align: center;
+    font-size: px2rem(42);
+    line-height: 1.0;
+    padding-top: 10rpx;
+  }
+
+  .customer-txt {
+    font-size: px2rem(32);
+    color: #333;
+  }
+}
+</style>

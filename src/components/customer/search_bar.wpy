@@ -1,0 +1,73 @@
+<template>
+  <view class="weui-search-bar hc-search-bar">
+    <view class="weui-search-bar__form">
+      <view class="weui-search-bar__box">
+        <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+        <input type="text" class="weui-search-bar__input" placeholder="搜索" value="{{inputVal}}" focus="{{inputShowed}}" @input="inputTyping" />
+        <view class="weui-icon-clear" wx:if="{{inputVal}}" @tap="clearInput">
+          <icon type="clear" size="14"></icon>
+        </view>
+      </view>
+      <!-- lebel -->
+      <label class="weui-search-bar__label" hidden="{{inputShowed}}" @tap="showInput">
+        <icon class="weui-icon-search" type="search" size="14"></icon>
+        <view class="weui-search-bar__text">搜索</view>
+      </label>
+    </view>
+    <!-- 搜索和取消 -->
+    <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" @tap="cancelInput">{{inputVal ? '搜索' : '取消'}}</view>
+  </view>
+  <view class="search-placeholder"></view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import throttle from 'utils/throttle'
+
+export default class SearchBar extends wepy.component {
+  data = {
+    inputShowed: false,
+    inputVal: ''
+  }
+
+  onLoad() {
+    this._emitThrottle = throttle(this.emitInput, 300, { trailing: true })
+  }
+
+  emitInput(inputVal) {
+    if (inputVal) {
+      this.$emit('inputThrottle', inputVal)
+    }
+  }
+  
+  methods = {
+    showInput() {
+      this.inputShowed = true
+      this.$emit('labelTap')
+    },
+
+    inputTyping(e) {
+      this.inputVal = e.detail.value
+      this._emitThrottle(e.detail.value)
+    },
+
+    clearInput() {
+      this.inputVal = ''
+      // this.$emit('input', null);
+    },
+
+    cancelInput() {
+      this.inputShowed = false
+      this.$emit('cancelInput')
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../styles/fns';
+
+.hc-search-bar {
+  font-size: px2rem(28);
+}
+</style>

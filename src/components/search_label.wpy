@@ -1,0 +1,55 @@
+<style lang="scss">
+@import "../styles/fns";
+
+.search-label-box {
+  background-image: linear-gradient(90deg, #0af, #0085ff);
+  padding: px2vw(15) px2vw(28);
+}
+
+.search-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 9.6vw;
+  background-color: #fff;
+  color: #999;
+  
+  .icon-search {
+    font-size: 32rpx;
+  }
+
+  .label {
+    font-size: 28rpx;
+  }
+}
+</style>
+
+<template>
+  <view class="search-label-box">
+    <view class="search-label">
+      <icon class="iconfont icon-search"></icon>
+      <text class="label">{{param.placeholder == null  ? '搜索徽长生鲜水果名称...' : param.placeholder }}</text>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class SearchLabel extends wepy.component {
+  props = {
+    param: {}
+  }
+  data = {}
+  
+  methods = {
+    search() {
+      // const param = JSON.stringify(this.param);
+      // this.$root.$navigate(`/pages/goods/search?param=${param}`);
+    }
+  }
+  
+  onLoad() {
+  }
+}
+</script>

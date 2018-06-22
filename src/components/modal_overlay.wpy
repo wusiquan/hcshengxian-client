@@ -1,0 +1,97 @@
+<style lang="scss">
+@import '../styles/fns';
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  z-index: 200;
+  font-size: px2rem(28);
+  -webkit-font-smoothing: antialiased;
+  background: rgba(#000, 0.5);
+
+  // animation
+  opacity: 0;
+  transition: opacity 0.3s;
+  transform: translate(0, 0);
+  perspective: 500px;
+  &.is-visible {
+    opacity: 1;
+  }
+}
+</style>
+
+<template>
+  <view class="modal-overlay{{overlayClasses}}" hidden="{{!is_open}}" @tap="overlayTap">
+    <view class="modal-content">
+      <slot></slot>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class ModalOverlay extends wepy.component {
+  
+  data = {
+    // opacity属性
+    visible: false,
+    // 显示, 隐藏
+    is_open: false
+  }
+
+  computed = {
+    overlayClasses() {
+      let cls = ''
+      if (this.visible) {
+        cls += ' is-visible'
+      }
+      return cls
+    }
+  }
+
+  // getData() {
+  //   return {
+  //   }
+  // }
+
+  onLoad() {
+    // setTimeout(() => {
+    //   this.open()
+    //   this.$apply()
+    // }, 1000)
+  }
+
+  methods = {
+  }
+
+  open() {
+    this.is_open = true
+    setTimeout(() => {
+      this.visible = true
+      this.$apply()
+    }, 0)
+    this.$emit('open')
+  }
+
+  /**
+   * 关闭modal并emit 'close'事件
+   */
+  close() {
+    this.visible = false
+    // TODO: 感觉并不是特别好
+    setTimeout(() => {
+      this.is_open = false
+      this.$apply()
+    }, 300)
+    this.$emit('close')
+  }
+}
+</script>
+

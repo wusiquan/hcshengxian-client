@@ -1,0 +1,22 @@
+<style lang="scss">
+.shop-info-container { height: 100px; background-color: pink; }
+</style>
+
+<template>
+<view class="shop-info-container">
+  商家信息
+</view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class ShopInfo extends wepy.component {
+
+  onLoad() {}
+
+  methods = {
+    
+  }
+}
+</script>

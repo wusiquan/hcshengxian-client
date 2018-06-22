@@ -1,0 +1,75 @@
+<style lang="scss">
+@import "../../styles/fns";
+
+.shop-tab-container {
+  display: flex;
+  border-bottom: 1px solid #eee;
+  height: 80rpx;
+  line-height: 80rpx;
+  
+  .tab-item {
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+  }
+  
+  .tab-text {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    font-size: px2rem(28);
+    color: #666;
+  }
+
+  .tab-item-active .tab-text {
+    color: #333;
+    font-weight: 700;
+  }
+
+  .tab-item-active .tab-text:after {
+    content: ' ';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #2395ff;
+    width: 100%;
+    height: px2vw(2);
+    z-index: 1;  
+  }
+}
+</style>
+<template>
+  <view class="shop-tab-container">
+    <repeat for="{{['生鲜水果', '评价', '商家']}}" index="i" item="item">
+      <view class="tab-item{{cur == i ? ' tab-item-active' : ''}}" @tap="switchTab({{i}})">
+        <text class="tab-text">{{item}}</text>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class ShopTab extends wepy.component {
+
+  props = {
+    cur: {
+      type: Number,
+      default: 0
+    }
+  }
+
+  methods = {
+    switchTab(index) {
+      if (this.cur != index) {
+        this.$emit('switchTab', index)
+      }
+    }
+  }
+
+  onLoad() {
+    
+  }
+}
+</script>

@@ -1,0 +1,20 @@
+// 设计稿为750px
+// http://caibaojian.com/vw-vh.html
+@function px2vw($px) {
+  @return ($px / (750)) * 100vw;
+}
+
+@function px2rem($px) {
+  @return ($px / (750 / 20)) * 1rem;
+}
+
+// @function rpx($px) {
+//   @return ($px / 750) * 1
+// }
+
+
+@mixin text-ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

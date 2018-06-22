@@ -1,0 +1,29 @@
+@import './fns';
+
+@font-face {
+  font-family: 'hcfont';
+  src: url('//at.alicdn.com/t/font_701824_okg2p1sp54.eot');
+  src: url('//at.alicdn.com/t/font_701824_okg2p1sp54.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_701824_okg2p1sp54.woff') format('woff'),
+  url('//at.alicdn.com/t/font_701824_okg2p1sp54.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_701824_okg2p1sp54.svg#hcfont') format('svg');
+}
+
+.iconfont {
+  font-family:"hcfont";
+  font-size: px2rem(20);
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-search:before { content: "\e603"; }
+.icon-dingwei:before { content: "\e605"; }
+.icon-tianjia:before { content: "\e661"; }
+.icon-bianji:before { content: "\e606"; }
+.icon-forward:before { content: "\e607"; }
+.icon-yigouxuan:before { content: "\e608"; }
+.icon-jingshi:before { content: "\e627"; }

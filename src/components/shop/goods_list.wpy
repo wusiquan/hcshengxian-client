@@ -1,0 +1,328 @@
+<template>
+  <scroll-view scroll-y class="goods-list-scroller">
+    <view class="goods-list">
+      <view class="goods-header">
+        <text class="title">标题</text>
+        <text class="desc">大家喜欢吃，才是真好吃。</text>
+      </view>
+      <view wx:for="{{goodsShown}}" class="goods-item">
+        <view class="goods-img">
+          <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{item.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
+        </view>
+        <view class="goods-info">
+          <view class="info-title">
+            {{item.name}}
+          </view>
+          <view class="info-desc">
+            {{item.desc}}
+          </view>
+          <view class="info-record">
+            <text class="record-sale">月售{{item.month_sale}}份</text>
+            <text class="record-comment">好评率{{item.satisfy_rate}}%</text>
+          </view>
+          <view class="info-activity" wx:if="{{item.discount > 0}}">
+            <view class="discount">
+              {{item.discount}}折
+              <view class="discount-bg"></view>
+            </view>
+            <view class="tag">
+              每单限1份优惠
+              <view class="tag-bg"></view>
+            </view>
+          </view>
+          <view class="info-price">
+            <text class="price">{{item.price}}</text>
+            <text class="originPrice" wx:if="{{item.discount > 0}}">¥{{item.original_price}}</text>
+          </view>
+          <!-- 有几种，选规则，添加，无货。 -->
+          <view class="info-cartbtn">
+            <view class="cartbtn">
+              <view class="minusbtn"></view>
+            </view>
+            <text class="num">1</text>
+            <view class="cartbtn">
+              <view class="addbtn"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <!-- <view class="goods-item">
+        <view class="goods-img">
+          <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/6/ce/a74ff56dad7dc71e945ab5d072e8cjpeg.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
+        </view>
+        <view class="goods-info">
+          <view class="info-title">
+            妃子笑荔枝500g*1盒
+          </view>
+          <view class="info-desc">
+            阳光充足，水果甜度足，是荔枝较早成熟的地方妃子笑果皮偏绿色，甜中带点微酸口感，冰镇后更加清甜爽口皮薄核小肉多，一剥开就能看见晶莹的荔枝果肉，咬一口便能尝到多汁口感
+          </view>
+          <view class="info-record">
+            <text class="record-sale">月售230份</text>
+            <text class="record-comment">好评率97%</text>
+          </view>
+          <view class="info-activity">
+            <view class="discount">
+              1.6折
+              <view class="discount-bg"></view>
+            </view>
+          </view>
+          <view class="info-price">
+            <text class="price">7.9</text>
+            <text class="originPrice">¥29.9</text>
+          </view>
+          <view class="info-cartbtn">
+            <view class="cartbtn">
+              <view class="minusbtn"></view>
+            </view>
+            <text class="num">1</text>
+            <view class="cartbtn">
+              <view class="addbtn"></view>
+            </view>
+          </view>
+          
+        </view>
+      </view> -->
+    </view>
+  </scroll-view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { store } from 'store/index'
+
+export default class GoodsList extends wepy.component {
+  data = {
+  }
+
+  props = {
+    allCategories: {
+      type: Array,
+      default: []
+    }
+  }
+
+  onLoad() {
+  }
+
+  computed = {
+    goodsShown() {
+      let goodsList = this.allCategories[0] && this.allCategories[0].goods
+      if (goodsList && goodsList.length) {
+        goodsList.forEach((goods) => {
+          if (goods.original_price && goods.price && goods.price !== goods.original_price) {
+            let discount = (goods.price / goods.original_price) * 10
+            goods.discount = discount.toFixed(1)
+          }
+        })
+      }
+      return goodsList
+    }
+  }
+
+  showGoodsInCategory(categoryId) {
+    let { goodsInCategory } = store.getState()
+    let goodsList = goodsInCategory[categoryId]
+    
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../styles/fns';
+
+.goods-list-scroller {
+  height: 100%;
+
+  .goods-list {
+    padding-bottom: 110rpx;
+  }
+
+  .goods-header {
+    display: flex;
+    padding: 15rpx 60rpx 15rpx 20rpx;
+    box-sizing: border-box;
+    border-bottom: 1rpx solid #eee;
+
+    .title {
+      margin-right: 10rpx;
+      color: #666;
+      font-size: px2rem(24);
+      line-height: 24rpx;
+      font-weight: 700;
+    }
+
+    .desc {
+      color: #999;
+      font-size: px2rem(20);
+      line-height: 20rpx;
+      @include text-ellipsis();
+    }
+  }
+
+  .goods-item {
+    display: flex;
+    padding: 20rpx;
+    min-height: 206rpx;
+
+    .goods-img {
+      width: 156rpx;
+      height: 156rpx;
+      margin-right: 20rpx;
+
+      .img {
+        display: block;
+        max-width: 100%;
+        height: 100%;
+        border-radius: 4rpx;
+      }
+    }
+
+    .goods-info {
+      position: relative;
+      padding-bottom: 50rpx;
+      width: 100%;
+      // 子元素高度自适应，不受父元素min-height的影响
+      height: 100%;
+
+      .info-title {
+        font-size: px2rem(30);
+        font-weight: 700;
+        line-height: 1.2;
+        padding-right: 40rpx;
+      }
+
+      .info-desc {
+        width: 100%;
+        max-width: 360rpx;
+        margin-top: 10rpx;
+        font-size: px2rem(19);
+        line-height: 1.2;
+        color: #999;
+        @include text-ellipsis();
+      }
+
+      .info-record {
+        display: flex;
+        margin: 13rpx 0;
+        font-size: px2rem(22);
+        color: #666;
+
+        .record-sale {
+          line-height: 1;
+        }
+
+        .record-comment {
+          margin-left: 8rpx;
+          line-height: 1;
+        }
+      }
+
+      .info-activity {
+        display: flex;
+        font-size: px2rem(20);
+        height: 26rpx;
+        line-height: 26rpx;
+
+        .discount {
+          position: relative;
+          padding: 0 6rpx;
+          color: #fff;
+          background-image: linear-gradient(90deg, #ff7416, #ff3c15 98%);
+        }
+
+        .discount-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 26rpx;
+        }
+
+        .tag {
+          position: relative;
+          padding: 0 6rpx;
+          color: #f07373;
+        }
+
+        .tag-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 26rpx;
+          border: 2rpx solid #ff3c15;
+          border-left: none;
+          box-sizing: border-box;
+        }
+      }
+
+      .info-price {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        line-height: 32rpx;
+        padding-bottom: 7rpx;
+
+        .price {
+          display: inline-block;
+          color: #f60;
+          height: 32rpx;
+          font-size: px2rem(32);
+          margin-right: 8rpx;
+        }
+
+        .price:before {
+          display: inline-block;
+          margin-right: 2rpx;
+          content: '\A5';
+          font-weight: 400;
+          font-size: px2rem(24);
+        }
+
+        .originPrice {
+          display: inline-block;
+          font-size: px2rem(24);
+          font-weight: 400;
+          color: #666;
+          text-decoration: line-through;
+        }
+      }
+
+      .info-cartbtn {
+        position: absolute;
+        right: 0;
+        bottom: -5rpx;
+        line-height: 1.0;
+      }
+
+      .cartbtn {
+        display: inline-block;
+        padding: 7rpx;
+        vertical-align: middle;
+      }
+
+      .minusbtn {
+        width: 40rpx;
+        height: 40rpx;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44' width='100%25' height='100%25' style='fill: %232395ff;'%3E%3Cpath fill-rule='evenodd' d='M22 0C9.8 0 0 9.8 0 22s9.8 22 22 22 22-9.8 22-22S34.2 0 22 0zm0 42C11 42 2 33 2 22S11 2 22 2s20 9 20 20-9 20-20 20z' clip-rule='evenodd'%3E%3C/path%3E%3Cpath fill-rule='evenodd' d='M32 20c1.1 0 2 .9 2 2s-.9 2-2 2H12c-1.1 0-2-.9-2-2s.9-2 2-2h20z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+      }
+
+      .addbtn {
+        width: 40rpx;
+        height: 40rpx;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44' width='100%25' height='100%25' style='fill:%232395ff;'%3E%3Cpath fill='none' d='M0 0h44v44H0z'%3E%3C/path%3E%3Cpath fill-rule='evenodd' d='M22 0C9.8 0 0 9.8 0 22s9.8 22 22 22 22-9.8 22-22S34.2 0 22 0zm10 24h-8v8c0 1.1-.9 2-2 2s-2-.9-2-2v-8h-8c-1.1 0-2-.9-2-2s.9-2 2-2h8v-8c0-1.1.9-2 2-2s2 .9 2 2v8h8c1.1 0 2 .9 2 2s-.9 2-2 2z' clip-rule='evenodd'%3E%3C/path%3E%3C/svg%3E");
+      }
+
+      .num {
+        display: inline-block;
+        min-width: 26rpx;
+        max-width: px2vm(30);
+        font-size: px2rem(28);
+        vertical-align: middle;
+        text-align: center;
+      }
+    }
+  }
+}
+</style>

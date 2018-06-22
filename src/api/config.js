@@ -1,0 +1,1 @@
+export const baseUrl = 'https://easy-mock.com/mock/5b2a134feb837e1c8f54b5cd/hcshengxian'

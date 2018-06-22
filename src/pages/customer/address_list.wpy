@@ -1,0 +1,190 @@
+<template>
+  <view class="address-list-container page__bd">
+    <scroll-view scroll-y class="address-list">
+      <view class="address-item">
+        <view class="address-item-content">
+          <view class="item-profile">
+            <text class="username">黄磊</text>
+            <text class="gender profiletxt">先生</text>
+            <text class="phonenum profiletxt">18500238337</text>
+          </view>
+          <view class="item-address">
+            <view class="tag">家</view>
+            <text class="addr">马鞍山市大北庄香樟园 10栋401室</text>
+          </view>
+        </view>
+        <view class="item-edit">
+          <icon class="iconfont icon-bianji"></icon>
+        </view>
+      </view>
+      <view class="address-item">
+        <view class="address-item-content">
+          <view class="item-profile">
+            <text class="username">周星驰</text>
+            <text class="gender profiletxt">先生</text>
+            <text class="phonenum profiletxt">18500238337</text>
+          </view>
+          <view class="item-address">
+            <view class="tag">公司</view>
+            <text class="addr">马鞍山市大北庄香樟园 10栋401室</text>
+          </view>
+        </view>
+        <view class="item-edit">
+          <icon class="iconfont icon-bianji"></icon>
+        </view>
+      </view>
+      <view class="address-item">
+        <view class="address-item-content">
+          <view class="item-profile">
+            <text class="username">张学友</text>
+            <text class="gender profiletxt">先生</text>
+            <text class="phonenum profiletxt">18500238337</text>
+          </view>
+          <view class="item-address">
+            <text class="addr">马鞍山市大北庄香樟园 10栋401室</text>
+          </view>
+        </view>
+        <view class="item-edit">
+          <icon class="iconfont icon-bianji"></icon>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="address-addition">
+      <icon class="iconfont icon-tianjia"></icon>
+      <text class="txt">新增收货地址</text>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class AddressList extends wepy.page {
+  onShow() {
+    console.log('address list page!')
+  }
+}
+</script>
+
+<style lang="scss">
+@import '../../styles/fns';
+
+.address-list-container {
+  font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.address-list {
+  height: calc(100% - 104rpx);
+  // height: 100%;
+  // overflow: hidden;
+  // margin-bottom: -104rpx;
+  // box-sizing: border-box;
+
+  .address-item {
+    display: flex;
+    background-color: #fff;
+    padding: 30rpx;
+    border-bottom: 1rpx solid #ddd;
+  }
+
+  .address-item-content {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+  }
+
+  .item-profile {
+    width: auto;
+    display: flex;
+    line-height: 1.0;
+    margin-bottom: 8rpx;
+    font-size: px2rem(35);
+
+    .username {
+      color: #333;
+      font-weight: 700;
+    }
+
+    .gender {
+      padding-left: 6rpx;
+      padding-right: 12rpx;
+    }
+
+    .profiletxt {
+      color: #666;
+    }
+  }
+  
+  .item-address {
+    display: flex;
+    line-height: 1.0;
+
+    .tag {
+      position: relative;
+      padding: 4rpx;
+      color: #ff5722;
+      font-size: px2rem(20);
+      line-height: 20rpx;
+      margin-right: 6rpx;
+    }
+
+    .tag:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1rpx solid #ff5722;
+      border-radius: 1rpx;
+    }
+
+    .addr {
+      color: #666;
+      font-size: px2rem(28);
+      @include text-ellipsis()
+    }
+  }
+
+  .item-edit {
+    flex-basis: 98rpx;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .icon-bianji {
+      font-size: px2rem(36);
+      line-height: 1.0;
+      color: #999;
+    }
+  }
+
+  .address-append {
+    height: 104rpx;
+  }
+}
+
+.address-addition {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 104rpx;
+  line-height: 1.0;
+  box-sizing: border-box;
+  border-top: 2rpx solid #ddd;
+  color: #3190e8;
+  background-color: #fff;
+
+  .icon-tianjia {
+    font-size: px2rem(40);
+    margin-right: 12rpx;
+    margin-top: 6rpx;
+  }
+
+  .txt {
+    height: 40rpx;
+    line-height: 40rpx;
+    font-size: px2rem(32);
+  }
+}
+</style>

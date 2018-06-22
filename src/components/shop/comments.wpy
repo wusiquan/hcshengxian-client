@@ -1,0 +1,18 @@
+<style lang="scss">
+
+</style>
+<template>
+<view class="comments-container">
+  评价异步加载组件
+</view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class Comments extends wepy.component {
+  data = {
+    loadedData: false
+  }
+}
+</script>

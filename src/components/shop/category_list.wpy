@@ -1,0 +1,95 @@
+<style lang="scss">
+@import "../../styles/fns";
+
+// .category-list-container {
+//   width: 154rpx;
+//   height: 100%;
+// }
+
+.category-list-scroll {
+  background-color: #f8f8f8;
+  height: 100%;
+  
+}
+
+.category-list {
+  padding-bottom: 170rpx;
+}
+
+.category-item {
+  // color: #333;
+  // background-color: #fff;
+  display: flex;
+  color: #666;
+  padding: 35rpx 15rpx;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e8e8e8;
+
+  &.active {
+    color: #333;
+    background-color: #fff;
+  }
+
+  .item-icon {
+    width: 26rpx;
+    height: 26rpx;
+    margin-right: 12rpx;
+    vertical-align: middle;
+  }
+
+  .item-txt {
+    display: inline-block;
+    line-height: 30rpx;
+    font-size: px2rem(24);
+    vertical-align: middle;
+  }
+}
+</style>
+
+<template>
+
+<!-- <view class="category-list-container"> -->
+  <scroll-view class="category-list-scroll" scroll-y style="width: {{width}}rpx">
+    <view class="category-list">
+      <!-- wx:key="id" -->
+      <view wx:for="{{allCategories}}" wx:for-index="idx" class="category-item{{idx == activeIndex ? ' active' : ''}}" @tap="tapCategory({{item.id}}, {{idx}})">
+        <image class="item-icon" src="{{item.icon_url}}" wx:if="{{item.icon_url}}" />
+        <text class="item-txt">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Goods from 'api/goods'
+import { store, addGoodsToCategory } from 'store/index'
+
+export default class CategoryList extends wepy.component {
+  data = {
+    activeIndex: 0
+  }
+
+  props = {
+    allCategories: {
+      type: Array,
+      default: []
+    },
+    width: String
+  }
+
+  methods = {
+    async tapCategory(categoryId, index) {
+      this.activeIndex = index
+
+      let { goodsInCategory } = store.getState()
+      let resData = await Goods.getGoodsInCate(categoryId)
+      store.dispatch(addGoodsToCategory(categoryId, resData.goods))
+
+      this.$invoke('../GoodsList', 'showGoodsInCategory', categoryId)
+    }
+  }
+}
+</script>
