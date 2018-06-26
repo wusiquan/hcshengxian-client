@@ -18,3 +18,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+
+@keyframes loadingClock {
+  0% {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 100%;
+  }
+}

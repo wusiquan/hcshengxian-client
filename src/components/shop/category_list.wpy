@@ -53,8 +53,7 @@
 <!-- <view class="category-list-container"> -->
   <scroll-view class="category-list-scroll" scroll-y style="width: {{width}}rpx">
     <view class="category-list">
-      <!-- wx:key="id" -->
-      <view wx:for="{{allCategories}}" wx:for-index="idx" class="category-item{{idx == activeIndex ? ' active' : ''}}" @tap="tapCategory({{item.id}}, {{idx}})">
+      <view wx:for="{{allCategories}}" wx:key="id" class="category-item{{item.id == activeId ? ' active' : ''}}" @tap="tapCategory({{item.id}})">
         <image class="item-icon" src="{{item.icon_url}}" wx:if="{{item.icon_url}}" />
         <text class="item-txt">{{item.name}}</text>
       </view>
@@ -64,12 +63,18 @@
 
 <script>
 import wepy from 'wepy'
-import Goods from 'api/goods'
-import { store, addGoodsToCategory } from 'store/index'
+import { connect } from 'wepy-redux'
+import { store, fetchGoodsInCateIfNeeded, selectCategoryId } from 'store/index'
+import { getActiveCategoryId } from 'store/reducers'
 
+@connect({
+  activeId(state) {
+    return getActiveCategoryId(state)
+  }
+})
 export default class CategoryList extends wepy.component {
   data = {
-    activeIndex: 0
+    activeCategoryId: null
   }
 
   props = {
@@ -81,14 +86,15 @@ export default class CategoryList extends wepy.component {
   }
 
   methods = {
-    async tapCategory(categoryId, index) {
-      this.activeIndex = index
+    tapCategory(categoryId) {
+      this.activeCategoryId = categoryId
 
-      let { goodsInCategory } = store.getState()
-      let resData = await Goods.getGoodsInCate(categoryId)
-      store.dispatch(addGoodsToCategory(categoryId, resData.goods))
-
-      this.$invoke('../GoodsList', 'showGoodsInCategory', categoryId)
+      // 不将其放入store中了, 简单点
+      // this.$invoke('../GoodsList', 'activeCategoryId', categoryId)
+      
+      // activeCategoryId放到store中了
+      store.dispatch(selectCategoryId(categoryId))
+      store.dispatch(fetchGoodsInCateIfNeeded(categoryId))
     }
   }
 }

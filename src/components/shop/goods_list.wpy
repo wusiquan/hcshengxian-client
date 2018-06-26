@@ -5,46 +5,50 @@
         <text class="title">标题</text>
         <text class="desc">大家喜欢吃，才是真好吃。</text>
       </view>
-      <view wx:for="{{goodsShown}}" class="goods-item">
-        <view class="goods-img">
-          <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{item.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
-        </view>
-        <view class="goods-info">
-          <view class="info-title">
-            {{item.name}}
-          </view>
-          <view class="info-desc">
-            {{item.desc}}
-          </view>
-          <view class="info-record">
-            <text class="record-sale">月售{{item.month_sale}}份</text>
-            <text class="record-comment">好评率{{item.satisfy_rate}}%</text>
-          </view>
-          <view class="info-activity" wx:if="{{item.discount > 0}}">
-            <view class="discount">
-              {{item.discount}}折
-              <view class="discount-bg"></view>
+      <view class="goods-list">
+        <repeat for="{{goodsList}}">
+          <view class="goods-item">
+            <view class="goods-img">
+              <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{item.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
             </view>
-            <view class="tag">
-              每单限1份优惠
-              <view class="tag-bg"></view>
+            <view class="goods-info">
+              <view class="info-title">
+                {{item.name}}
+              </view>
+              <view class="info-desc">
+                {{item.desc}}
+              </view>
+              <view class="info-record">
+                <text class="record-sale">月售{{item.month_sale}}份</text>
+                <text class="record-comment">好评率{{item.satisfy_rate}}%</text>
+              </view>
+              <view class="info-activity" wx:if="{{item.discount > 0}}">
+                <view class="discount">
+                  {{item.discount}}折
+                  <view class="discount-bg"></view>
+                </view>
+                <view class="tag">
+                  每单限1份优惠
+                  <view class="tag-bg"></view>
+                </view>
+              </view>
+              <view class="info-price">
+                <text class="price">{{item.price}}</text>
+                <text class="originPrice" wx:if="{{item.discount > 0}}">¥{{item.original_price}}</text>
+              </view>
+              <!-- 有几种，选规则，添加，无货。 -->
+              <view class="info-cartbtn">
+                <view class="cartbtn">
+                  <view class="minusbtn"></view>
+                </view>
+                <text class="num">1</text>
+                <view class="cartbtn">
+                  <view class="addbtn"></view>
+                </view>
+              </view>
             </view>
           </view>
-          <view class="info-price">
-            <text class="price">{{item.price}}</text>
-            <text class="originPrice" wx:if="{{item.discount > 0}}">¥{{item.original_price}}</text>
-          </view>
-          <!-- 有几种，选规则，添加，无货。 -->
-          <view class="info-cartbtn">
-            <view class="cartbtn">
-              <view class="minusbtn"></view>
-            </view>
-            <text class="num">1</text>
-            <view class="cartbtn">
-              <view class="addbtn"></view>
-            </view>
-          </view>
-        </view>
+        </repeat>
       </view>
       <!-- <view class="goods-item">
         <view class="goods-img">
@@ -83,48 +87,55 @@
           
         </view>
       </view> -->
+      <view class="goods-loading-wrapper">
+        <view class="loading-icon">loading</view>
+      </view>
+
+      <!-- <view class="goods-empty">
+      </view> -->
     </view>
   </scroll-view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import { connect } from 'wepy-redux'
 import { store } from 'store/index'
+import { getActiveCategoryId, getGoodsListInCategory } from 'store/reducers'
 
-export default class GoodsList extends wepy.component {
-  data = {
-  }
-
-  props = {
-    allCategories: {
-      type: Array,
-      default: []
+@connect({
+  goodsList(state) {
+    let activeId = getActiveCategoryId(state)
+    // 可能为null
+    if (activeId) {
+      // 可能为undefined
+      return getGoodsListInCategory(state, activeId)
     }
   }
 
+  // isGoodsLoading(state) {
+  //   console.log(this.age) 
+  // }
+
+  // isGoodsLoaded(state) {
+  // }
+})
+export default class GoodsList extends wepy.component {
   onLoad() {
   }
 
   computed = {
     goodsShown() {
-      let goodsList = this.allCategories[0] && this.allCategories[0].goods
-      if (goodsList && goodsList.length) {
-        goodsList.forEach((goods) => {
-          if (goods.original_price && goods.price && goods.price !== goods.original_price) {
-            let discount = (goods.price / goods.original_price) * 10
-            goods.discount = discount.toFixed(1)
-          }
-        })
-      }
-      return goodsList
+      return this.goodsList
     }
   }
-
-  showGoodsInCategory(categoryId) {
-    let { goodsInCategory } = store.getState()
-    let goodsList = goodsInCategory[categoryId]
-    
-  }
+  
+  // activeCategoryId(categoryId) {
+    // this._categoryId = categoryId
+    // let { goodsInCategory } = store.getState()
+    // this.goodsList = goodsInCategory[categoryId]
+    // this.$apply()
+  // }
 }
 </script>
 
@@ -323,6 +334,14 @@ export default class GoodsList extends wepy.component {
         text-align: center;
       }
     }
+  }
+}
+
+.goods-list-scroller {
+  .goods-loading-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

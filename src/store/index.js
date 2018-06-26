@@ -1,31 +1,22 @@
 // redux-thunk redux-promise-middleware redux-logger reselect
-import { createStore, combineReducers } from 'redux'
-import { 
-  getUA,
-  addGoodsToCategory
-} from './actions'
-import {
-  ua,
-  goodsInCategory
-} from './reducers'
+import { createStore, applyMiddleware } from 'redux'
+import { setStore, getStore } from 'wepy-redux'
+import rootReducer from './reducers'
+import thunk from 'redux-thunk'
+// TODO: 非生产环境
+import { createLogger } from 'redux-logger'
 
-/*
-addresList
 
-address
-{
-  location: ''
-  ...
-}
-*/
-export {
-  getUA,
-  addGoodsToCategory
-}
-export const store = createStore(
-  combineReducers({
-    ua,
-    goodsInCategory
-  })
+// actions
+export * from './actions'
+
+//  TODO: 其实官方不推荐这样，除非你确定你不会用到redux的server render
+// https://stackoverflow.com/questions/35411423/how-to-dispatch-a-redux-action-with-a-timeout/35415559#35415559
+export const rawStore = createStore(
+  rootReducer,
+  applyMiddleware(thunk, createLogger())
 )
 
+setStore(rawStore)
+
+export const store = getStore()

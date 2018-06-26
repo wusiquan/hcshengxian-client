@@ -26,6 +26,16 @@
     flex-basis: 0;
   }
 }
+// setTimeout(() => {
+//   var query = wx.createSelectorQuery()
+//   query.select('#aaa').boundingClientRect()
+//   query.exec(function (res) {
+//     //res就是 所有标签为mjltest的元素的信息 的数组
+//     console.log(res)
+//     //取高度
+//     console.log(res[0].height)
+//   })
+// }, 2000)
 </style>
 
 <template>
@@ -38,7 +48,7 @@
         <!-- 商品类别列表 -->
         <CategoryList width="154" :allCategories.sync="allCategories" />
         <!-- 商品列表 -->
-        <GoodsList class="menu-goods" :allCategories.sync="allCategories" />
+        <GoodsList class="menu-goods" />
 
         <TipBanner componetIs="promotion" />
         <!-- 购物车Banner -->
@@ -68,15 +78,34 @@ import ShopInfo from 'components/shop/shop_info'
 import GoodsModal from 'components/shop/goods_modal'
 import TipBanner from 'components/shop/tip_banner'
 import CartBanner from 'components/shop/cart_banner'
-import Goods from 'api/goods'
+import Shop from 'api/shop'
 import Tips from 'utils/tips'
+import { store, fetchCategories } from 'store/index'
+import { connect } from 'wepy-redux'
+import { getCateLoading, getCateLoaded, getCategories, getGoodsListInCategory } from 'store/reducers'
 
-export default class Category extends wepy.page {
-  data = {
-    currentIndex: 0,
-    allCategories: null
+@connect({
+  isCateLoading(state) {
+    return getCateLoading(state)
+  },
+
+  isCateLoaded(state) {
+    return getCateLoaded(state)
+  },
+
+  allCategories(state) {
+    return getCategories(state)
   }
 
+  // goodsList(state) {
+  //   let firstCategories = this.allCategories[0]
+  //   let categoryId = firstCategories && firstCategories.id
+  //   if (categoryId) {
+  //     return getGoodsListInCategory(state, categoryId)
+  //   }
+  // }
+})
+export default class Category extends wepy.page {
   components = {
     ShopTab: ShopTab,
     CategoryList: CategoryList,
@@ -86,6 +115,10 @@ export default class Category extends wepy.page {
     TipBanner: TipBanner,
     CartBanner: CartBanner,
     GoodsModal: GoodsModal
+  }
+
+  data = {
+    currentIndex: 0
   }
 
   methods = {
@@ -108,12 +141,17 @@ export default class Category extends wepy.page {
     }
   }
 
-  async onLoad() {
-    // setTimeout(() => {
-    //   this.cartEmptyClass = ''
-    //   this.$apply()
-    // }, 3000)
+  watch = {
+    isCateLoading() {
+      Tips.showLoading()
+    },
 
+    isCateLoaded() {
+      Tips.hideLoading()
+    }
+  }
+
+  onLoad() {
     // 获取手机信息
     // wepy.getSystemInfo().then((res) => {
     //   store.dispatch({
@@ -121,30 +159,8 @@ export default class Category extends wepy.page {
     //     system: res.system
     //   })
     // })
-    
-    Tips.showLoading()
-    
-    let allCategories = await Goods.getCategories()
-    this.allCategories = allCategories
 
-    setTimeout(() => {
-      Tips.hideLoading()
-    })
-
-    this.$apply()
-  }
-
-  onShow() {
-    // setTimeout(() => {
-    //   var query = wx.createSelectorQuery()
-    //   query.select('#aaa').boundingClientRect()
-    //   query.exec(function (res) {
-    //     //res就是 所有标签为mjltest的元素的信息 的数组
-    //     console.log(res)
-    //     //取高度
-    //     console.log(res[0].height)
-    //   })
-    // }, 2000)
+    store.dispatch(fetchCategories())
   }
 }
 </script>

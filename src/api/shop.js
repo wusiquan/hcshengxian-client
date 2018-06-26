@@ -2,7 +2,7 @@ import wepy from 'wepy'
 import { baseUrl } from './config'
 import Request from 'utils/request'
 
-export default class Goods {
+export default class Shop {
   // static getMenu() {
   //   const menuUrl = `${baseUrl}/v1/menu`
   //   const getMenu = Request.get(menuUrl)
@@ -10,7 +10,7 @@ export default class Goods {
   //     return data
   //   })
   // }
-
+  
   // 获取商品类别及首屏类别的商品列表
   static getCategories(data = null) {
     const url = baseUrl + '/v1/category'

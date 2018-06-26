@@ -82,7 +82,7 @@ export default class extends wepy.app {
         }
       ]
     },
-    debug: true
+    debug: false
   }
 }
 </script>
