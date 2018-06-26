@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import produce from 'immer'
-import { handleAction, handleActions } from 'redux-actions'
+import { handleAction, handleActions, combineActions } from 'redux-actions'
 import actionTypes from '../actiontypes'
 import initialState from './initstate'
 
@@ -16,11 +16,11 @@ import initialState from './initstate'
 
 const goods = handleActions(
   {
-    // [actionTypes.requestGoodsInCategory]: (state, action) => {
-    //   return produce(state, draft => {
-    //     draft.isFetching = true
-    //   })
-    // },
+    [actionTypes.requestGoodsInCategory]: (state, action) => {
+      return produce(state, draft => {
+        draft.isLoading = true
+      })
+    },
     [actionTypes.resolveGoodsInCategory]: (state, action) => {
       return produce(state, draft => {
         let payload = action.payload
@@ -28,29 +28,24 @@ const goods = handleActions(
         // payload.goods.forEach((goods) => {
         //   draft.goodsList.push(goods)
         // })
-        draft.isLoaded = true
+        draft.isLoading = false
       })
     }
   },
   {
     goodsList: [],
-    isLoading: false,
-    isLoaded: false
+    isLoading: false
   }
 )
 
-const goodsInCateReducer = function(state, action) {
-  return produce(state, draft => {
-    let payload = action.payload
-    let categoryId = payload.categoryId.toString()
-    draft[categoryId] = goods(state[categoryId], action)
-  })
-}
-
-const goodsInCategory = handleActions(
-  // combineActions(actionTypes.requestGoodsInCategory, actionTypes.addGoodsInCategory)
-  {
-    [actionTypes.resolveGoodsInCategory]: goodsInCateReducer
+const goodsInCategory = handleAction(
+  combineActions(actionTypes.requestGoodsInCategory, actionTypes.resolveGoodsInCategory),
+  (state, action) => {
+    return produce(state, draft => {
+      let payload = action.payload
+      let categoryId = payload.categoryId.toString()
+      draft[categoryId] = goods(state[categoryId], action)
+    })
   },
   initialState.goodsInCategory
 )
@@ -63,4 +58,8 @@ export {
 // export selectors
 export const getGoodsListInCategory = (state, categoryId) => {
   return state[categoryId] && state[categoryId].goodsList
+}
+
+export const getGoodsLoading = (state, categoryId) => {
+  return state[categoryId] && state[categoryId].isLoading
 }

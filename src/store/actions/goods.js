@@ -2,14 +2,14 @@ import actionTypes from '../actiontypes'
 import { createAction } from 'redux-actions'
 import Shop from 'api/shop'
 
-const requestGoodsInCate = createAction(actionTypes.requestGoodsInCategory, (categoryId) => {
+const requestGoodsInCategory = createAction(actionTypes.requestGoodsInCategory, (categoryId) => {
   return {
     categoryId
   }
 })
 
-// 首屏商品直接添进分类，所以需要export
-export const addGoodsInCate = createAction(actionTypes.resolveGoodsInCategory, (categoryId, goods) => {
+// 首屏商品直接添进分类，所以需要export给actions/category.js
+export const resolveGoodsInCategory = createAction(actionTypes.resolveGoodsInCategory, (categoryId, goods) => {
   return {
     categoryId,
     goods
@@ -26,7 +26,7 @@ export const addGoodsInCate = createAction(actionTypes.resolveGoodsInCategory, (
 
 const fetchGoodsInCate = (categoryId) => {
   return async function(dispatch) {
-    // dispatch(requestGoodsInCate(categoryId))
+    dispatch(requestGoodsInCategory(categoryId))
     let resData = await Shop.getGoodsInCate(categoryId)
 
     // 对数据稍加处理
@@ -36,8 +36,9 @@ const fetchGoodsInCate = (categoryId) => {
         goods.discount = discount.toFixed(1)
       }
     })
-    
-    dispatch(addGoodsInCate(categoryId, resData.goods))
+    setTimeout(function() {
+      dispatch(resolveGoodsInCategory(categoryId, resData.goods))
+    }, 5000)
   }
 }
 

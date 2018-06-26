@@ -13,12 +13,11 @@ const initialState = {
   goodsInCart: [
 
   ],
-
+  
   goodsInCategory: {
     // [categoryId]: { 
     //   goodsList: [id: xx, name: xx], 
-    //   isLoading: false, 
-    //   isLoaded: false
+    //   isLoading: false, 加载中, 将其设为true, 加载完成, 将其设为false
     // }
   },
   activeCategoryId: null,

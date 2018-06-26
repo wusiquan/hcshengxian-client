@@ -6,7 +6,7 @@
         <text class="desc">大家喜欢吃，才是真好吃。</text>
       </view>
       <view class="goods-list">
-        <repeat for="{{goodsList}}">
+        <repeat for="{{goodsList}}" wx:if="!isGoodsListLoading">
           <view class="goods-item">
             <view class="goods-img">
               <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{item.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
@@ -87,7 +87,7 @@
           
         </view>
       </view> -->
-      <view class="goods-loading-wrapper">
+      <view class="goods-loading-wrapper" wx:if="isGoodsListLoading">
         <view class="loading-icon">loading</view>
       </view>
 
@@ -101,7 +101,7 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import { store } from 'store/index'
-import { getActiveCategoryId, getGoodsListInCategory } from 'store/reducers'
+import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsLoaded } from 'store/reducers'
 
 @connect({
   goodsList(state) {
@@ -111,23 +111,14 @@ import { getActiveCategoryId, getGoodsListInCategory } from 'store/reducers'
       // 可能为undefined
       return getGoodsListInCategory(state, activeId)
     }
+  },
+
+  isGoodsListLoading(state) {
+    return getGoodsLoading(state)
   }
-
-  // isGoodsLoading(state) {
-  //   console.log(this.age) 
-  // }
-
-  // isGoodsLoaded(state) {
-  // }
 })
 export default class GoodsList extends wepy.component {
   onLoad() {
-  }
-
-  computed = {
-    goodsShown() {
-      return this.goodsList
-    }
   }
   
   // activeCategoryId(categoryId) {

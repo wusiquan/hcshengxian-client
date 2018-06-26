@@ -1,7 +1,7 @@
 import actionTypes from '../actiontypes'
 import { createAction } from 'redux-actions'
 import Shop from 'api/shop'
-import { addGoodsInCate } from './goods'
+import { resolveGoodsInCategory } from './goods'
 
 const requestCategories = createAction(actionTypes.requestCategories)
 const resolveCategories = createAction(actionTypes.resolveCategories, (categories) => {
@@ -33,7 +33,7 @@ export const fetchCategories = () => {
     dispatch(resolveCategories(cates))
     // 至少得有一个类别，不然开什么店。。。
     dispatch(selectCategoryId(firstCategory.id))
-    dispatch(addGoodsInCate(firstCategory.id, firstCategory.goods))
+    dispatch(resolveGoodsInCategory(firstCategory.id, firstCategory.goods))
   }
 }
 
