@@ -3,7 +3,7 @@ import produce from 'immer'
 import { handleAction, handleActions, combineActions } from 'redux-actions'
 import actionTypes from '../actiontypes'
 import initialState from './initstate'
-
+import { createSelector } from 'reselect'
 // export function goodsInCategory(state = initialState.goodsInCategory, action) {
 //   return produce(state, draft => {
 //     if (action.type === actionTypes.addGoodsInCategory) {
@@ -14,7 +14,7 @@ import initialState from './initstate'
 //   })
 // }
 
-const goods = handleActions(
+const goodsInCategory = handleActions(
   {
     [actionTypes.requestGoodsInCategory]: (state, action) => {
       return produce(state, draft => {
@@ -24,42 +24,71 @@ const goods = handleActions(
     [actionTypes.resolveGoodsInCategory]: (state, action) => {
       return produce(state, draft => {
         let payload = action.payload
-        draft.goodsList = payload.goods
-        // payload.goods.forEach((goods) => {
-        //   draft.goodsList.push(goods)
-        // })
+        payload.goods.forEach((goodsItem) => {
+          draft.goodsIds.push(goodsItem.goodsid)
+        })
         draft.isLoading = false
       })
     }
   },
   {
-    goodsList: [],
+    goodsIds: [],
     isLoading: false
   }
 )
 
-const goodsInCategory = handleAction(
+const allGoods = handleAction(actionTypes.resolveGoodsInCategory, (state, action) => {
+  return produce(state, draft => {
+    let payload = action.payload
+    payload.goods.forEach((goods) => {
+      if (!draft[goods.goodsid]) {
+        draft[goods.goodsid] = goods
+      }
+    })
+  })
+}, {})
+
+// export reducer
+export const goods = handleAction(
   combineActions(actionTypes.requestGoodsInCategory, actionTypes.resolveGoodsInCategory),
   (state, action) => {
     return produce(state, draft => {
       let payload = action.payload
       let categoryId = payload.categoryId.toString()
-      draft[categoryId] = goods(state[categoryId], action)
+      draft.goodsInCategory[categoryId] = goodsInCategory(state[categoryId], action)
+      draft.allGoods = allGoods(state.allGoods, action)
     })
   },
-  initialState.goodsInCategory
+  initialState.goods
 )
 
-// export reducers
-export {
-  goodsInCategory
+// selectors
+const getGoodsInCategory = (state, categoryId) => {
+  return state.goodsInCategory && state.goodsInCategory[categoryId]
 }
 
-// export selectors
-export const getGoodsListInCategory = (state, categoryId) => {
-  return state[categoryId] && state[categoryId].goodsList
+const getAllGoods = (state) => {
+  return state.allGoods
 }
 
-export const getGoodsLoading = (state, categoryId) => {
-  return state[categoryId] && state[categoryId].isLoading
-}
+export const getGoodsLoading = createSelector(
+  getGoodsInCategory,
+  (goodsInCategory) => {
+    if (goodsInCategory) {
+      return goodsInCategory.isLoading
+    }
+  }
+)
+
+export const getGoodsListInCategory = createSelector(
+  [getGoodsInCategory, getAllGoods],
+  (goodsInCategory, allGoods) => {
+    if (goodsInCategory) {
+      let goodsIds = goodsInCategory.goodsIds
+      return goodsIds.map((goodsId) => {
+        return allGoods[goodsId]
+      })
+    }
+  }
+)
+

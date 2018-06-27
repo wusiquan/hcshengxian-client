@@ -16,24 +16,17 @@ export const resolveGoodsInCategory = createAction(actionTypes.resolveGoodsInCat
   }
 })
 
-// export const addGoodsInCategory = (categoryId, goods) => {
-//   return {
-//     type: actionTypes.addGoodsInCategory,
-//     categoryId,
-//     goods
-//   }
-// }
-
 const fetchGoodsInCate = (categoryId) => {
   return async function(dispatch) {
     dispatch(requestGoodsInCategory(categoryId))
     let resData = await Shop.getGoodsInCate(categoryId)
 
     // 对数据稍加处理
-    resData.goods.forEach((goods) => {
-      if (goods.original_price && goods.price && goods.price !== goods.original_price) {
-        let discount = (goods.price / goods.original_price) * 10
-        goods.discount = discount.toFixed(1)
+    resData.goods.forEach((goodsItem) => {
+      let { original_price, price } = goodsItem
+      if (original_price && price && price !== original_price) {
+        let discount = (price / original_price) * 10
+        goodsItem.discount = discount.toFixed(1)
       }
     })
     setTimeout(function() {
@@ -43,7 +36,7 @@ const fetchGoodsInCate = (categoryId) => {
 }
 
 const shouldFetchGoodsInCate = (state, categoryId) => {
-  let goodsList = state.goodsInCategory[categoryId]
+  let goodsList = state.goods.goodsInCategory[categoryId]
   
   if (!goodsList) {
     return true

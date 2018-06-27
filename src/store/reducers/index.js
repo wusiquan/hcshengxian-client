@@ -24,7 +24,7 @@ import * as fromGoods from './goods'
 const rootReducer = combineReducers({
   // ua,
   categories: fromCategory.categories,
-  goodsInCategory: fromGoods.goodsInCategory,
+  goods: fromGoods.goods,
   activeCategoryId: fromCategory.activeCategoryId
 })
 
@@ -38,8 +38,8 @@ export const getCategories = state => fromCategory.getCates(state.categories)
 
 // fromGoods
 export const getGoodsListInCategory = (state, categoryId) => {
-  return fromGoods.getGoodsListInCategory(state.goodsInCategory, categoryId)
+  return fromGoods.getGoodsListInCategory(state.goods, categoryId)
 }
-export const getGoodsLoading = state => fromGoods.getGoodsLoading(state.goodsInCategory)
+export const getGoodsLoading = state => fromGoods.getGoodsLoading(state.goods.goodsInCategory)
 
 export default rootReducer

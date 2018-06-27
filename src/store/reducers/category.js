@@ -24,7 +24,7 @@ export const categories = handleActions(
 
 // 当前商品类别id
 export const activeCategoryId = handleAction(
-  actionTypes.selectCategoryId,
+  actionTypes.chooseCategoryId,
   // 由于initialState.activeCategoryId是一个基本值，直接返回了
   (state, action) => {
     let { payload } = action

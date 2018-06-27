@@ -159,7 +159,7 @@ export default class Category extends wepy.page {
     //     system: res.system
     //   })
     // })
-
+    
     store.dispatch(fetchCategories())
   }
 }

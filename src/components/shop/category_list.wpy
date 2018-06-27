@@ -53,7 +53,7 @@
 <!-- <view class="category-list-container"> -->
   <scroll-view class="category-list-scroll" scroll-y style="width: {{width}}rpx">
     <view class="category-list">
-      <view wx:for="{{allCategories}}" wx:key="id" class="category-item{{item.id == activeId ? ' active' : ''}}" @tap="tapCategory({{item.id}})">
+      <view wx:for="{{allCategories}}" wx:key="id" class="category-item{{item.categoryid == activeId ? ' active' : ''}}" @tap="tapCategory({{item.categoryid}})">
         <image class="item-icon" src="{{item.icon_url}}" wx:if="{{item.icon_url}}" />
         <text class="item-txt">{{item.name}}</text>
       </view>
@@ -64,7 +64,7 @@
 <script>
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
-import { store, fetchGoodsInCateIfNeeded, selectCategoryId } from 'store/index'
+import { store, fetchGoodsInCateIfNeeded, chooseCategoryId } from 'store/index'
 import { getActiveCategoryId } from 'store/reducers'
 
 @connect({
@@ -93,7 +93,7 @@ export default class CategoryList extends wepy.component {
       // this.$invoke('../GoodsList', 'activeCategoryId', categoryId)
       
       // activeCategoryId放到store中了
-      store.dispatch(selectCategoryId(categoryId))
+      store.dispatch(chooseCategoryId(categoryId))
       store.dispatch(fetchGoodsInCateIfNeeded(categoryId))
     }
   }

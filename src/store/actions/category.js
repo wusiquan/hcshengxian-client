@@ -10,7 +10,7 @@ const resolveCategories = createAction(actionTypes.resolveCategories, (categorie
   }
 })
 
-export const selectCategoryId = createAction(actionTypes.selectCategoryId, (categoryId) => {
+export const chooseCategoryId = createAction(actionTypes.chooseCategoryId, (categoryId) => {
   return {
     categoryId: categoryId
   }
@@ -22,18 +22,18 @@ export const fetchCategories = () => {
     let resData = await Shop.getCategories()
     let firstCategory = resData[0]
     
-    // TODO: 其实只要cate去除goods即可, functional?
+    // TODO: 其实只要cate去掉goods即可, delete?functional?
     let cates = resData.map((cate) => {
       return {
-        id: cate.id,
+        categoryid: cate.categoryid,
         name: cate.name,
         icon_url: cate.icon_url
       }
     })
     dispatch(resolveCategories(cates))
     // 至少得有一个类别，不然开什么店。。。
-    dispatch(selectCategoryId(firstCategory.id))
-    dispatch(resolveGoodsInCategory(firstCategory.id, firstCategory.goods))
+    dispatch(chooseCategoryId(firstCategory.categoryid))
+    dispatch(resolveGoodsInCategory(firstCategory.categoryid, firstCategory.goods))
   }
 }
 

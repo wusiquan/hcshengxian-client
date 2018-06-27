@@ -101,7 +101,7 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import { store } from 'store/index'
-import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsLoaded } from 'store/reducers'
+import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading } from 'store/reducers'
 
 @connect({
   goodsList(state) {
@@ -120,13 +120,6 @@ import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsL
 export default class GoodsList extends wepy.component {
   onLoad() {
   }
-  
-  // activeCategoryId(categoryId) {
-    // this._categoryId = categoryId
-    // let { goodsInCategory } = store.getState()
-    // this.goodsList = goodsInCategory[categoryId]
-    // this.$apply()
-  // }
 }
 </script>
 
