@@ -38,11 +38,12 @@
               </view>
               <!-- 有几种，选规则，添加，无货。 -->
               <view class="info-cartbtn">
-                <view class="cartbtn">
+                <view class="cartbtn" @tap="subtractItemFromCart({{item.goodsid}})" wx:if="{{goodsInCart[item.goodsid].count}}">
                   <view class="minusbtn"></view>
                 </view>
-                <text class="num">1</text>
-                <view class="cartbtn">
+                <!-- 竟然不用判断goodsInCart[item.goodsid] -->
+                <text class="num" wx:if="{{goodsInCart[item.goodsid].count}}">{{goodsInCart[item.goodsid].count}}</text>
+                <view class="cartbtn" @tap="addItemToCart({{item.goodsid}})">
                   <view class="addbtn"></view>
                 </view>
               </view>
@@ -100,8 +101,8 @@
 <script>
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
-import { store } from 'store/index'
-import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading } from 'store/reducers'
+import { store, addItemToCart, subtractItemFromCart } from 'store/index'
+import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsInCart } from 'store/reducers'
 
 @connect({
   goodsList(state) {
@@ -115,10 +116,22 @@ import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading } from 'st
 
   isGoodsListLoading(state) {
     return getGoodsLoading(state)
+  },
+
+  goodsInCart(state) {
+    return getGoodsInCart(state)
   }
 })
 export default class GoodsList extends wepy.component {
-  onLoad() {
+
+  methods = {
+    addItemToCart(goodsId) {
+      store.dispatch(addItemToCart(goodsId))
+    },
+
+    subtractItemFromCart(goodsId) {
+      store.dispatch(subtractItemFromCart(goodsId))
+    }
   }
 }
 </script>

@@ -29,18 +29,18 @@ const initialState = {
     },
 
     allGoods: {
-      // [goodsid]: {
+      // [goodsId]: {
       // 
       // }
     }
-  }
-
-  
+  },
 
   // 购物车中商品列表
-  // goodsInCart: [
-
-  // ]
+  cart: {
+    // goodsInCart: {
+    //   [goodsId]: { goodsid, count }
+    // }
+  }
 }
 
 export default initialState

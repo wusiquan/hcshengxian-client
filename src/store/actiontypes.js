@@ -13,7 +13,8 @@ const actionTypes = {
 
   // --- cart ---
   // 添加一件货物进货物车
-  addItemToCart: 'ADD_Item_TO_CART'
+  addItemToCart: 'ADD_ITEM_TO_CART',
+  subtractItemFromCart: 'SUBTRACT_ITEM_FROM_CART'
 }
 
 export default actionTypes

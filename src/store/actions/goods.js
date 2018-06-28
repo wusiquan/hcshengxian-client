@@ -29,9 +29,8 @@ const fetchGoodsInCate = (categoryId) => {
         goodsItem.discount = discount.toFixed(1)
       }
     })
-    setTimeout(function() {
-      dispatch(resolveGoodsInCategory(categoryId, resData.goods))
-    }, 5000)
+    
+    dispatch(resolveGoodsInCategory(categoryId, resData.goods))
   }
 }
 

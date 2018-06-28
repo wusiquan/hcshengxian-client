@@ -4,6 +4,8 @@ import { handleAction, handleActions, combineActions } from 'redux-actions'
 import actionTypes from '../actiontypes'
 import initialState from './initstate'
 import { createSelector } from 'reselect'
+
+// 最开始的reducer写法
 // export function goodsInCategory(state = initialState.goodsInCategory, action) {
 //   return produce(state, draft => {
 //     if (action.type === actionTypes.addGoodsInCategory) {
@@ -55,7 +57,8 @@ export const goods = handleAction(
     return produce(state, draft => {
       let payload = action.payload
       let categoryId = payload.categoryId.toString()
-      draft.goodsInCategory[categoryId] = goodsInCategory(state[categoryId], action)
+      // 这时state.goodsInCategory[categoryId] 不是为 undefined 吗?
+      draft.goodsInCategory[categoryId] = goodsInCategory(state.goodsInCategory[categoryId], action)
       draft.allGoods = allGoods(state.allGoods, action)
     })
   },

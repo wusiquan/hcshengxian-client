@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import * as fromCategory from './category'
 import * as fromGoods from './goods'
+import * as fromCart from './cart'
 
 // reducer 命名几乎与initialState中键一致
 // export function ua(state = initialState.useragent, action) {
@@ -23,9 +24,10 @@ import * as fromGoods from './goods'
 
 const rootReducer = combineReducers({
   // ua,
+  activeCategoryId: fromCategory.activeCategoryId,
   categories: fromCategory.categories,
   goods: fromGoods.goods,
-  activeCategoryId: fromCategory.activeCategoryId
+  cart: fromCart.cart
 })
 
 // export selectors...
@@ -41,5 +43,8 @@ export const getGoodsListInCategory = (state, categoryId) => {
   return fromGoods.getGoodsListInCategory(state.goods, categoryId)
 }
 export const getGoodsLoading = state => fromGoods.getGoodsLoading(state.goods.goodsInCategory)
+
+// fromCart
+export const getGoodsInCart = state => fromCart.getGoodsInCart(state.cart)
 
 export default rootReducer
