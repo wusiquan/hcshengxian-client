@@ -42,9 +42,12 @@ export const getCategories = state => fromCategory.getCates(state.categories)
 export const getGoodsListInCategory = (state, categoryId) => {
   return fromGoods.getGoodsListInCategory(state.goods, categoryId)
 }
-export const getGoodsLoading = state => fromGoods.getGoodsLoading(state.goods.goodsInCategory)
+export const getGoodsListLoading = (state, categoryId) => fromGoods.getGoodsListLoading(state.goods, categoryId)
+export const getGoodsListLoaded = (state, categoryId) => fromGoods.getGoodsListLoaded(state.goods, categoryId)
 
 // fromCart
 export const getGoodsInCart = state => fromCart.getGoodsInCart(state.cart)
+export const getGoodsInCartIds = state => fromCart.getGoodsInCartIds(state.cart)
+export const getGoodsTotalInCart = state => fromCart.getGoodsTotalInCart(state.cart)
 
 export default rootReducer

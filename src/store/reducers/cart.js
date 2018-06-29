@@ -1,39 +1,15 @@
-import { combineReducers } from 'redux' 
+import { combineReducers } from 'redux'
 import produce from 'immer'
-import { handleAction, handleActions } from 'redux-actions'
+import { handleActions } from 'redux-actions'
 import actionTypes from '../actiontypes'
-import initialState from './initstate'
+import { createSelector } from 'reselect'
 
-// export const goodsInCart = handleAction(
-//   actionTypes.addItemToCart,
-//   (state, action) => {
-//     return produce(state, draft => {
-//       let payload = action.payload
-//       console.log('--->', payload)
-//     }
-//   },
-//   cart
-// )
 
-// const goodsInCart = function(state = {}, action) {
-//   let payload = action.payload
-//   let goodsId = payload.goodsId
-//   let count = 1
-//   if (state[goodsId]) {
-//     count = state[goodsId].count + 1
-//   }
-
-//   return {
-//     ...state,
-//     [goodsId]: {
-//       goodsId: count
-//     }
-//   }
-// }
-
-const subtractItem = function(state, goodsId) {
+const subtractItem = function(state, action) {
   return produce(state, draft => {
-    let goods = draft[goodsId]
+    let payload = action.payload
+    let goodsId = payload.goodsId
+    let goods = state[goodsId]
     if (goods) {
       if (goods.count > 1) {
         draft[goodsId].count -= 1
@@ -44,29 +20,22 @@ const subtractItem = function(state, goodsId) {
   })
 }
 
-const addItem = function(state, goodsId) {
+const addItem = function(state, action) {
   return produce(state, draft => {
-    if (draft[goodsId]) {
+    let payload = action.payload
+    let goodsId = payload.goodsId
+    if (state[goodsId]) {
       draft[goodsId].count += 1
     } else {
-      draft[goodsId] = { goodsId: goodsId, count: 1 }
+      draft[goodsId] = { count: 1 }
     }
   })
 }
 
-const createItemReducer = function(helperFunction) {
-  return (state, action) => {
-    let payload = action.payload
-    let goodsId = payload.goodsId
-
-    return helperFunction(state, goodsId)
-  }
-}
-
 const goodsInCart = handleActions(
   {
-    [actionTypes.addItemToCart]: createItemReducer(addItem),
-    [actionTypes.subtractItemFromCart]: createItemReducer(subtractItem)
+    [actionTypes.addItemToCart]: addItem,
+    [actionTypes.subtractItemFromCart]: subtractItem
     // 原先的代码， 想加一个subtract都感觉不知道，如何重用...
     // (state, action) => {
     //   return produce(state, draft => {
@@ -86,9 +55,52 @@ const goodsInCart = handleActions(
     //   })
     // },
     // 
-  },
-  {}
-)
+  }, {})
+
+// const addGoodsId = function(state, action, goodsInCartState) {
+//   return produce(state, draft => {
+//     let payload = action.payload
+//     let goodsId = payload.goodsId
+//     if (goodsInCartState[goodsId].count == 1) {
+//       draft.push(goodsId)
+//     }
+//   })
+// }
+
+// const removeGoodsId = function(state, action, goodsInCartState) {
+//   return produce(state, draft => {
+//     let payload = action.payload
+//     let goodsId = payload.goodsId
+//     if (!goodsInCartState[goodsId]) {
+//       let index = state.indexOf(goodsId)
+//       draft.splice(index, 1)
+//     }
+//   })
+// }
+
+// const goodsIds = function(state = [], action, goodsInCartState) {
+//   switch(action.type) {
+//     case actionTypes.addItemToCart:
+//       return addGoodsId(state, action, goodsInCartState)
+//       break;
+//     case actionTypes.subtractItemFromCart:
+//     return removeGoodsId(state, action, goodsInCartState)
+//       break;
+//     default:
+//       return state
+//   }
+// }
+
+// 演示一波, 从不同的reducer分支取数据
+// export const cart = function(state = {}, action) {
+//   let goodsInCartState = goodsInCart(state.goodsInCart, action)
+//   let goodsIdsState = goodsIds(state.goodsIds, action, goodsInCartState)
+//   return {
+//     goodsInCart: goodsInCartState,
+//     goodsIds: goodsIdsState
+//   }
+// }
+
 
 export const cart = combineReducers({
   goodsInCart
@@ -97,3 +109,19 @@ export const cart = combineReducers({
 export const getGoodsInCart = function(state) {
   return state.goodsInCart
 }
+
+// FIXME: 为了它，搞一个goodsIds的reducer没什么必要，直接用computed derived data即可
+export const getGoodsInCartIds = function(state) {
+  return Object.keys(state.goodsInCart)
+}
+
+export const getGoodsTotalInCart = createSelector(
+  getGoodsInCart,
+  (goodsInCart) => {
+    let totalNum = 0
+    for(let goodsId in goodsInCart) {
+      totalNum += goodsInCart[goodsId].count
+    }
+    return totalNum
+  }
+)

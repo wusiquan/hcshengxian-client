@@ -29,7 +29,7 @@ const fetchGoodsInCate = (categoryId) => {
         goodsItem.discount = discount.toFixed(1)
       }
     })
-    
+
     dispatch(resolveGoodsInCategory(categoryId, resData.goods))
   }
 }

@@ -5,10 +5,10 @@
         <text class="title">标题</text>
         <text class="desc">大家喜欢吃，才是真好吃。</text>
       </view>
-      <view class="goods-list">
-        <repeat for="{{goodsList}}" wx:if="!isGoodsListLoading">
+      <view class="goods-list" wx:if="{{isGoodsListLoaded}}">
+        <repeat for="{{goodsList}}">
           <view class="goods-item">
-            <view class="goods-img">
+            <view class="goods-img" @tap="showGoodsModal({{item}})">
               <image class="img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{item.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!140x140r/gravity/Center/crop/140x140/" />
             </view>
             <view class="goods-info">
@@ -88,10 +88,10 @@
           
         </view>
       </view> -->
-      <view class="goods-loading-wrapper" wx:if="isGoodsListLoading">
-        <view class="loading-icon">loading</view>
+      <view class="goods-loading-wrapper" wx:if="{{isGoodsListLoading && !isGoodsListLoaded}}">
+        <view class="weui-loading"></view>
       </view>
-
+      
       <!-- <view class="goods-empty">
       </view> -->
     </view>
@@ -102,7 +102,7 @@
 import wepy from 'wepy'
 import { connect } from 'wepy-redux'
 import { store, addItemToCart, subtractItemFromCart } from 'store/index'
-import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsInCart } from 'store/reducers'
+import { getActiveCategoryId, getGoodsListInCategory, getGoodsListLoading, getGoodsListLoaded, getGoodsInCart } from 'store/reducers'
 
 @connect({
   goodsList(state) {
@@ -115,7 +115,17 @@ import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsI
   },
 
   isGoodsListLoading(state) {
-    return getGoodsLoading(state)
+    let activeId = getActiveCategoryId(state)
+    if (activeId) {
+      return getGoodsListLoading(state, activeId)
+    }
+  },
+
+  isGoodsListLoaded(state) {
+    let activeId = getActiveCategoryId(state)
+    if (activeId) {
+      return getGoodsListLoaded(state, activeId)
+    }
   },
 
   goodsInCart(state) {
@@ -125,8 +135,13 @@ import { getActiveCategoryId, getGoodsListInCategory, getGoodsLoading, getGoodsI
 export default class GoodsList extends wepy.component {
 
   methods = {
+    showGoodsModal(goodsInfo) {
+      this.$emit('showGoodsModal', goodsInfo)
+    },
+
     addItemToCart(goodsId) {
       store.dispatch(addItemToCart(goodsId))
+      this.$invoke('../CartBanner', 'shakeCart')
     },
 
     subtractItemFromCart(goodsId) {
@@ -339,6 +354,7 @@ export default class GoodsList extends wepy.component {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 400rpx;
   }
 }
 </style>

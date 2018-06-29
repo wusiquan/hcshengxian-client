@@ -14,20 +14,24 @@
   font-size: px2rem(28);
   -webkit-font-smoothing: antialiased;
   background: rgba(#000, 0.5);
-
+  overflow: hidden;
   // animation
   opacity: 0;
   transition: opacity 0.3s;
-  transform: translate(0, 0);
   perspective: 500px;
+
   &.is-visible {
     opacity: 1;
+  }
+
+  &.is-notshow {
+    display: none;
   }
 }
 </style>
 
 <template>
-  <view class="modal-overlay{{overlayClasses}}" hidden="{{!is_open}}" @tap="overlayTap">
+  <view id="__modal-overlay__" class="modal-overlay{{overlayClasses}}" @tap="onOverlayTap">
     <view class="modal-content">
       <slot></slot>
     </view>
@@ -38,59 +42,63 @@
 import wepy from 'wepy'
 
 export default class ModalOverlay extends wepy.component {
-  
+
   data = {
     // opacity属性
     visible: false,
     // 显示, 隐藏
-    is_open: false
+    show: false
   }
 
   computed = {
     overlayClasses() {
       let cls = ''
+      
+      if (!this.show) {
+        cls += ' is-notshow'
+      }
+
       if (this.visible) {
         cls += ' is-visible'
       }
+
       return cls
     }
   }
 
-  // getData() {
-  //   return {
-  //   }
-  // }
-
   onLoad() {
-    // setTimeout(() => {
-    //   this.open()
-    //   this.$apply()
-    // }, 1000)
   }
 
   methods = {
-  }
-
-  open() {
-    this.is_open = true
-    setTimeout(() => {
-      this.visible = true
-      this.$apply()
-    }, 0)
-    this.$emit('open')
+    onOverlayTap(evt) {
+      let target = evt.target
+      let currentTarget = evt.currentTarget
+      if (target.id == currentTarget.id && target.id == '__modal-overlay__') {
+        this.hideIt()
+      }
+    }
   }
 
   /**
    * 关闭modal并emit 'close'事件
    */
-  close() {
+  hideIt() {
     this.visible = false
-    // TODO: 感觉并不是特别好
     setTimeout(() => {
-      this.is_open = false
+      this.show = false
       this.$apply()
     }, 300)
-    this.$emit('close')
+    this.$emit('hide')
+  }
+
+  showIt() {
+    this.show = true
+    this.$apply()
+    setTimeout(() => {
+      this.visible = true
+      this.$apply()
+    }, 30)
+    this.$emit('show')
   }
 }
 </script>

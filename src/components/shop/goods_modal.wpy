@@ -184,24 +184,24 @@
 
 <template>
   <ModalOverlay>
-    <view class="goods-detail-modal">
+    <view class="goods-detail-modal" wx:if="{{goodsInfo}}">
       <view class="goods-detail-img">
-        <image class="detail-img" mode="aspectFit" src="https://fuss10.elemecdn.com/a/49/6adc002c3a6cbfc956c63b1c73e87jpeg.jpeg?imageMogr/format/webp/thumbnail/!750x750r/gravity/Center/crop/750x750/" />
+        <image class="detail-img" mode="aspectFit" src="https://fuss10.elemecdn.com/{{goodsInfo.image_path}}.jpeg?imageMogr/format/webp/thumbnail/!750x750r/gravity/Center/crop/750x750/" />
         <view class="info-detail-desc">
-          1篮－1篮图片不代表实物，实际果品为：蟠桃6个1.35kg，金果4个，新奇士2个，维多利亚1串/550g，冰火蜜瓜1.8kg，红心火龙果1.1kg，青蜜芒0.58kg，红颜草莓0.65kg，静宁富士1.1kg，蓝莓2盒，超甜蕉850g，都乐菠萝850g，冰糖绿宝香瓜800g/个
+          {{goodsInfo.desc}}
         </view>
       </view>
       <view class="goods-detail-info">
         <view class="info-title">
-          妃子笑荔枝500g*1盒
+          {{goodsInfo.name}}
         </view>
         <view class="info-record">
-          <text class="record-sale">月售230份</text>
-          <text class="record-comment">好评率97%</text>
+          <text class="record-sale">月售{{goodsInfo.month_sale}}份</text>
+          <text class="record-comment">好评率{{goodsInfo.satisfy_rate}}%</text>
         </view>
-        <view class="info-activity">
+        <view class="info-activity" wx:if="{{goodsInfo.discount > 0}}">
           <view class="discount">
-            1.6折
+            {{goodsInfo.discount}}折
             <view class="discount-bg"></view>
           </view>
           <view class="tag">
@@ -210,20 +210,19 @@
           </view>
         </view>
         <view class="info-price">
-          <text class="price">7.9</text>
-          <text class="originPrice">¥29.9</text>
+          <text class="price">{{goodsInfo.price}}</text>
+          <text class="originPrice" wx:if="{{goodsInfo.discount > 0}}">¥{{goodsInfo.original_price}}</text>
         </view>
         <!-- 有几种，选规则，添加，无货。 -->
         <view class="info-cartbtn">
           <view class="cartbtn">
             <view class="minusbtn"></view>
           </view>
-          <text class="num">1</text>
+          <text class="num">0</text>
           <view class="cartbtn">
             <view class="addbtn"></view>
           </view>
         </view>
-        
       </view>
     </view>
   </ModalOverlay>
@@ -238,8 +237,18 @@ export default class GoodsModal extends wepy.component {
     ModalOverlay: ModalOverlay
   }
   
+  data = {
+    goodsInfo: null
+  }
+  
   onLoad() {
+  }
 
+  showModal(goodsInfo) {
+    this.goodsInfo = goodsInfo
+    console.log(goodsInfo)
+    this.$apply()
+    this.$com.ModalOverlay.showIt()
   }
 }
 </script>

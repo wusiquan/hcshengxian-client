@@ -24,7 +24,8 @@ const initialState = {
     goodsInCategory: {
       // [categoryId]: {
       //   goodsIds: ["id1", "id2"], 
-      //   isLoading: false, 加载中, 将其设为true, 加载完成, 将其设为false
+      //   isLoading: false, 加载中, 将其设为true, 
+      //   isLoaded: false   加载完成, 将其设为true
       // }
     },
 
@@ -40,6 +41,8 @@ const initialState = {
     // goodsInCart: {
     //   [goodsId]: { goodsid, count }
     // }
+    
+    // goodsIds: []
   }
 }
 

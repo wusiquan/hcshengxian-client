@@ -48,13 +48,11 @@
         <!-- 商品类别列表 -->
         <CategoryList width="154" :allCategories.sync="allCategories" />
         <!-- 商品列表 -->
-        <GoodsList class="menu-goods" />
+        <GoodsList class="menu-goods" @showGoodsModal="showGoodsModal" />
 
         <TipBanner componetIs="promotion" />
         <!-- 购物车Banner -->
         <CartBanner />
-        <!-- 商品Modal -->
-        <GoodsModal />
     </swiper-item>
       <swiper-item>
         <Comments />
@@ -64,6 +62,8 @@
       </swiper-item>
     </swiper>
   </view>
+  <!-- 商品Modal -->
+  <GoodsModal />
 </view>
 
 </template>
@@ -138,6 +138,11 @@ export default class Category extends wepy.page {
     // 监听shopTab的tap事件
     switchTab(index) {
       this.currentIndex = index
+    },
+
+    showGoodsModal(goodsInfo) {
+      let goodsModal = this.$com.GoodsModal
+      goodsModal.showModal(goodsInfo)
     }
   }
 

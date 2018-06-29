@@ -29,13 +29,14 @@ const goodsInCategory = handleActions(
         payload.goods.forEach((goodsItem) => {
           draft.goodsIds.push(goodsItem.goodsid)
         })
-        draft.isLoading = false
+        draft.isLoaded = true
       })
     }
   },
   {
     goodsIds: [],
-    isLoading: false
+    isLoading: false,
+    isLoaded: false
   }
 )
 
@@ -66,7 +67,7 @@ export const goods = handleAction(
 )
 
 // selectors
-const getGoodsInCategory = (state, categoryId) => {
+const getGoodsStateInCategory = (state, categoryId) => {
   return state.goodsInCategory && state.goodsInCategory[categoryId]
 }
 
@@ -74,20 +75,29 @@ const getAllGoods = (state) => {
   return state.allGoods
 }
 
-export const getGoodsLoading = createSelector(
-  getGoodsInCategory,
-  (goodsInCategory) => {
-    if (goodsInCategory) {
-      return goodsInCategory.isLoading
+export const getGoodsListLoading = createSelector(
+  getGoodsStateInCategory,
+  (goodsStateInCategory) => {
+    if (goodsStateInCategory) {
+      return goodsStateInCategory.isLoading
+    }
+  }
+)
+
+export const getGoodsListLoaded = createSelector(
+  getGoodsStateInCategory,
+  (goodsStateInCategory) => {
+    if (goodsStateInCategory) {
+      return goodsStateInCategory.isLoaded
     }
   }
 )
 
 export const getGoodsListInCategory = createSelector(
-  [getGoodsInCategory, getAllGoods],
-  (goodsInCategory, allGoods) => {
-    if (goodsInCategory) {
-      let goodsIds = goodsInCategory.goodsIds
+  [getGoodsStateInCategory, getAllGoods],
+  (goodsStateInCategory, allGoods) => {
+    if (goodsStateInCategory) {
+      let goodsIds = goodsStateInCategory.goodsIds
       return goodsIds.map((goodsId) => {
         return allGoods[goodsId]
       })
